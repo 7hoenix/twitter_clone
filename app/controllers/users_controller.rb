@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
+  before_action :find_user, only: [:show, :edit]
+
   def show
-    @user = User.find(params[:id])
   end
 
   def new
@@ -19,7 +20,14 @@ class UsersController < ApplicationController
     end
   end
 
+  def edit
+  end
+
     private
+
+    def find_user
+      @user = User.find(params[:id])
+    end
 
     def user_params
       params.require(:user).permit(:name, :email, :password,

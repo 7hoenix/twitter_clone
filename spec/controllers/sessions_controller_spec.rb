@@ -1,25 +1,27 @@
 require "rails_helper"
 
 RSpec.describe SessionsController do
-  context "when password is invalid" do
-    it "renders the page with error" do
-      user = create(:user)
+  describe "POST #create" do
+    context "when password is invalid" do
+      it "renders the page with error" do
+        user = create(:user)
 
-      post :create, session: { email: user.email, password: "invalid" }
+        post :create, session: { email: user.email, password: "invalid" }
 
-      expect(response).to render_template(:new)
-      expect(flash[:danger]).to match(/^Invalid email\/password combination/)
+        expect(response).to render_template(:new)
+        expect(flash[:danger]).to match(/^Invalid email\/password combination/)
+      end
     end
-  end
 
-  context "when password is valid" do
-    it "sets the user in the session and redirects them to their dashboard" do
-      user = create(:user)
+    context "when password is valid" do
+      it "sets the user in the session and redirects them to their dashboard" do
+        user = create(:user)
 
-      post :create, session: { email: user.email, password: user.password }
+        post :create, session: { email: user.email, password: user.password }
 
-      expect(response).to redirect_to user
-      expect(controller.current_user).to eq user
+        expect(response).to redirect_to user
+        expect(controller.current_user).to eq user
+      end
     end
   end
 end
