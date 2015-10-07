@@ -16,18 +16,35 @@ RSpec.describe UsersController do
         get :edit, id: user.id
 
         expect(response.status).to eq 200
+        expect(response).to render_template(:edit)
       end
     end
+  end
 
-  xdescribe "POST #update" do
+  describe "PATCH #update" do
+    context "with valid attributes" do
       it "updates the user with a new email address" do
         user = create(:user)
 
-        patch :update, user: { email: "edited@example.com", password:
+        patch :update, id: user, user: { email: "edited@example.com", password:
           user.password }
 
         expect(response).to redirect_to user
+        user.reload
         expect(user.email).to eq("edited@example.com")
+      end
+    end
+
+    context "with invalid attributes" do
+      it "redirects to the edit page" do
+        user = create(:user)
+
+        patch :update, id: user, user: { email: "edited.com", password:
+          user.password }
+
+        expect(response).to render_template :edit
+        expect(user.email).to_not eq("edited.com")
+        expect(flash[:error]).to match(/^Invalid email\/password combination/)
       end
     end
   end

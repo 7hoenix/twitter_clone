@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :find_user, only: [:show, :edit]
+  before_action :find_user, only: [:show, :edit, :update]
 
   def show
   end
@@ -21,6 +21,16 @@ class UsersController < ApplicationController
   end
 
   def edit
+  end
+
+  def update
+    if @user.update_attributes(user_params)
+      flash[:success] = "You have updated your profile"
+      redirect_to @user
+    else
+      flash[:error] = "Invalid email/password combination"
+      render "edit"
+    end
   end
 
     private
