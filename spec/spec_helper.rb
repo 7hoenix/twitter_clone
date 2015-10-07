@@ -1,6 +1,22 @@
 RSpec.configure do |config|
   require 'capybara/rspec'
+  require 'database_cleaner'
+  require_relative 'support/factory_girl'
+
   config.include Capybara::DSL
+
+  config.before(:suite) do
+    DatabaseCleaner.clean_with(:truncation)
+  end
+
+  config.before(:each) do |example|
+    DatabaseCleaner.strategy = example.metadata[:js] ? :truncation : :transaction
+    DatabaseCleaner.start
+  end
+
+  config.after(:each) do
+    DatabaseCleaner.clean
+  end
 
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
