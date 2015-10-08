@@ -12,6 +12,9 @@ gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'bootstrap-sass'
 gem 'bcrypt', '~> 3.1.7'
+gem 'faker'
+gem 'will_paginate'
+gem 'bootstrap-will_paginate'
 # gem 'unicorn'
 # gem 'capistrano-rails', group: :development
 
