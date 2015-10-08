@@ -1,11 +1,5 @@
 require 'rails_helper'
 
-module LoginHelpers
-  def login(user)
-    session[:user_id] = user.id
-  end
-end
-
 include LoginHelpers
 
 RSpec.describe UsersController do
@@ -82,6 +76,13 @@ RSpec.describe UsersController do
 
         expect(response).to redirect_to(root_path)
       end
+    end
+  end
+
+  describe "GET #index" do
+    it "should redirect index when not logged in" do
+      get :index
+      expect(response).to redirect_to(login_path)
     end
   end
 end
