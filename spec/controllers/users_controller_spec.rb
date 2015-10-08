@@ -1,5 +1,13 @@
 require 'rails_helper'
 
+module LoginHelpers
+  def login(user)
+    session[:user_id] = user.id
+  end
+end
+
+include LoginHelpers
+
 RSpec.describe UsersController do
   describe "GET #new" do
     it "returns http success" do
@@ -13,10 +21,23 @@ RSpec.describe UsersController do
       it "opens the edit page with the user data in the table" do
         user = create(:user)
 
+        login(user)
         get :edit, id: user.id
 
         expect(response.status).to eq 200
         expect(response).to render_template(:edit)
+      end
+    end
+
+    context "should redirect edit when logged in as wrong user" do
+        it "when logged in as a different user" do
+        justin = create(:user, name: "Justin")
+        archer = create(:user, name: "Archer")
+
+        login(justin)
+        get :edit, id: archer.id
+
+        expect(response).to redirect_to(root_path)
       end
     end
   end
@@ -26,6 +47,7 @@ RSpec.describe UsersController do
       it "updates the user with a new email address" do
         user = create(:user)
 
+        login(user)
         patch :update, id: user, user: { email: "edited@example.com", password:
           user.password }
 
@@ -39,12 +61,26 @@ RSpec.describe UsersController do
       it "redirects to the edit page" do
         user = create(:user)
 
+        login(user)
         patch :update, id: user, user: { email: "edited.com", password:
           user.password }
 
         expect(response).to render_template :edit
         expect(user.email).to_not eq("edited.com")
         expect(flash[:error]).to match(/^Invalid email\/password combination/)
+      end
+    end
+
+    context "when logged in with a different user" do
+      it "redirects to root" do
+        justin = create(:user, name: "Justin")
+        archer = create(:user, name: "Archer")
+
+        login(justin)
+        patch :update, id: archer, user: { email: "edited.com", password:
+          justin.password }
+
+        expect(response).to redirect_to(root_path)
       end
     end
   end
